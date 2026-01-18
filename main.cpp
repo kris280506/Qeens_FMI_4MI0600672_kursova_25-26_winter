@@ -225,6 +225,20 @@ int main() {
 				}
 			}
 			cout << endl;
+		}else if (areEqual(command, "back")) {
+			if (game.board == nullptr || game.moveCount == 0) {
+				cout << "Nyama hodove za vrushtane.\n";
+			} else {
+				game.moveCount--;
+				int lastR = game.moveHistoryRow[game.moveCount];
+				int lastC = game.moveHistoryCol[game.moveCount];
+				
+				game.board[lastR][lastC] = 0;
+				
+				game.currentPlayer = (game.currentPlayer == 1) ? 2 : 1;
+				cout << "Posledniyat hod e otmenen.\n";
+				showBoard(game);
+			}
 		}
 		// Pomoshtno menu
 		else if (areEqual(command, "help")) {
