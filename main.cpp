@@ -227,7 +227,7 @@ int main() {
 			cout << endl;
 		}else if (areEqual(command, "back")) {
 			if (game.board == nullptr || game.moveCount == 0) {
-				cout << "Nyama hodove za vrushtane.\n";
+				cout << "There are no moves to undo.\n";
 			} else {
 				game.moveCount--;
 				int lastR = game.moveHistoryRow[game.moveCount];
@@ -236,7 +236,7 @@ int main() {
 				game.board[lastR][lastC] = 0;
 				
 				game.currentPlayer = (game.currentPlayer == 1) ? 2 : 1;
-				cout << "Posledniyat hod e otmenen.\n";
+				cout << "Last move undone.\n";
 				showBoard(game);
 			}
 		}
