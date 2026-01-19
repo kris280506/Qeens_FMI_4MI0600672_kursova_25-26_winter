@@ -16,8 +16,11 @@
 #include <iostream>
 #include <cmath> // Za abs()
 #include <fstream> // Za save/load
-
-using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::ifstream;
+using std::ofstream;
 
 // Maksimalen broi hodove za istoriyata
 const int MAX_HISTORY = 1000;
