@@ -248,7 +248,7 @@ int main() {
 				cout << "Invalid move.\n";
 			}
 				
-				// Proverka za kraya na igrata (dostupno ot Commit 3)
+				// Proverka za kraya na igrata 
 				if (!hasValidMoves(game)) {
 					// Pobedityal e tozi, koito toku shto e igral
 					int winner = (game.currentPlayer == 1) ? 2 : 1;
