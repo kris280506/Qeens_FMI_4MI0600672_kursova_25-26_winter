@@ -7,14 +7,15 @@
 * Winter semester 2025/2026
 *
 * @author Kristian Varbanov
-* @faculty number 4MI0600672
+* @idnumber 4MI0600672
 * @compiler VC
 *
-* Main file with game logic
+* Main file for the Queens Game project.
 *
 */
 #include <iostream>
 #include <cmath> // Za abs()
+#include <fstream> // Za save/load
 
 using namespace std;
 
@@ -138,7 +139,56 @@ void showBoard(Game& game) {
 		cout << endl;
 	}
 }
+void saveGame(Game& game, const char* filename) {
+	ofstream file(filename);
+	if (!file.is_open()) {
+		cout << "Error saving file.\n";
+		return;
+	}
+	file << game.rows << " " << game.cols << " " << game.currentPlayer << " " << game.moveCount << endl;
+	
+	for (int i = 0; i < game.rows; i++) {
+		for (int j = 0; j < game.cols; j++) {
+			file << game.board[i][j] << " ";
+		}
+	}
+	// Save history for consistency
+	for (int i = 0; i < game.moveCount; i++) {
+		file << " " << game.moveHistoryRow[i] << " " << game.moveHistoryCol[i];
+	}
+	
+	file.close();
+	cout << "Game saved to " << filename << endl;
+}
 
+void loadGame(Game& game, const char* filename) {
+	ifstream file(filename);
+	if (!file.is_open()) {
+		cout << "Error opening file.\n";
+		return;
+	}
+	
+	int n, m, cp, mc;
+	file >> n >> m >> cp >> mc;
+	
+	initGame(game, n, m);
+	game.currentPlayer = cp;
+	game.moveCount = mc;
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			file >> game.board[i][j];
+		}
+	}
+	
+	for (int i = 0; i < mc; i++) {
+		file >> game.moveHistoryRow[i] >> game.moveHistoryCol[i];
+	}
+	
+	file.close();
+	cout << "Game loaded.\n";
+	showBoard(game);
+}
 int main() {
 	Game game;
 	game.board = nullptr; 
@@ -194,6 +244,9 @@ int main() {
 				// Smyana na reda (ako e 1 stava 2, inache 1)
 				game.currentPlayer = (game.currentPlayer == 1) ? 2 : 1;
 				showBoard(game);
+            }else {
+				cout << "Invalid move.\n";
+			}
 				
 				// Proverka za kraya na igrata (dostupno ot Commit 3)
 				if (!hasValidMoves(game)) {
@@ -203,17 +256,17 @@ int main() {
 					clearMemory(game); 
 				}
 
-			} else {
-				cout << "Invalid move.\n";
-			}
-		}
+		} 
+		
 		// Informaciya za tova koi e na hod
 		else if (areEqual(command, "turn")) {
-			if (game.board != nullptr)
+			if (game.board != nullptr) {
 				cout << "Player " << game.currentPlayer << " is on turn.\n";
-		}
+			} else {
+                cout << "No active game.\n";
+            }
 		// Pokazvane na vsichki svobodni kletki
-		else if (areEqual(command, "free")) {
+		}else if (areEqual(command, "free")) {
 			if (game.board == nullptr) continue;
 			cout << "Free cells: ";
 			// Obhojdame cyalata dyska i pechatame validnite
@@ -239,18 +292,32 @@ int main() {
 				cout << "Last move undone.\n";
 				showBoard(game);
 			}
+		}else if (areEqual(command, "save")) {
+			char filename[50];
+			cin >> filename;
+			if (game.board != nullptr) saveGame(game, filename);
+		}
+		else if (areEqual(command, "load")) {
+			char filename[50];
+			cin >> filename;
+			loadGame(game, filename);
 		}
 		// Pomoshtno menu
 		else if (areEqual(command, "help")) {
 			cout << "Commands:\n";
-			cout << "new N M      - New game with size NxM\n";
+			cout << "new N M      - Start NxM game\n";
 			cout << "play x y     - Place queen at (x,y)\n";
-			cout << "free         - Show free cells\n";
-			cout << "show         - Show the board\n";
-			cout << "turn         - Who is on turn\n";
-			cout << "exit         - Exit\n";
-		}
-	}
+			cout << "back         - Undo last move\n";
+			cout << "free         - List valid moves\n";
+			cout << "show         - Show board\n";
+			cout << "save filename - Save game\n";
+			cout << "load filename - Load game\n";
+			cout << "exit         - Exit program\n";
+		} else {
+            cout << "Unknown command. Type 'help' for commands.\n";
+        }
+	
+    }
 
 	clearMemory(game); // Pochistvane na pametta pri izhod
 	return 0;
